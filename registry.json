@@ -1,4 +1,20 @@
 {
-  "extensions": {}
+  "extensions": {
+    "theme": {
+      "description": "Semantic color roles for extensions (theme.text, theme.ui, theme.ui_active).",
+      "url": "https://raw.githubusercontent.com/RetroTho/sweetroll-registry/main/extensions/theme.py"
+    },
+    "status_bar": {
+      "description": "Footer showing filename, dirty state, cursor position, and status messages.",
+      "url": "https://raw.githubusercontent.com/RetroTho/sweetroll-registry/main/extensions/status_bar.py"
+    },
+    "tabs": {
+      "description": "Multiple buffers with a tab bar. Ctrl+K/L to switch, Ctrl+N for new tab.",
+      "url": "https://raw.githubusercontent.com/RetroTho/sweetroll-registry/main/extensions/tabs.py"
+    },
+    "save_untitled": {
+      "description": "Prompts for a filename when saving an untitled buffer.",
+      "url": "https://raw.githubusercontent.com/RetroTho/sweetroll-registry/main/extensions/save_untitled.py"
+    }
+  }
 }
-

@@ -1,136 +1,159 @@
-"""Tabs extension: multiple buffers in a tab bar; Ctrl+K/Ctrl+L switch, Ctrl+N new tab."""
+"""Tabs extension: multiple buffers in a tab bar.
 
-from dataclasses import dataclass
-from pathlib import Path
+Ctrl+K = previous tab
+Ctrl+L = next tab
+Ctrl+N = new tab
+"""
 
 import curses
 
-# Ctrl+K prev, Ctrl+L next, Ctrl+N new tab (ASCII control codes)
 KEY_PREV_TAB = 11   # Ctrl+K
 KEY_NEXT_TAB = 12   # Ctrl+L
-KEY_NEW_TAB = 14    # Ctrl+N
+KEY_NEW_TAB = 14   # Ctrl+N
+
+tabs = []
+current_tab = 0
 
 
-@dataclass
-class TabState:
-    path: Path | None
-    lines: list[str]
-    cursor: tuple[int, int]
-    scroll_y: int
-    scroll_x: int
-    dirty: bool
+def make_tab(path=None, lines=None, cursor=(0, 0), scroll_y=0, scroll_x=0, dirty=False):
+    """Return a new tab dictionary with the given values (all optional)."""
+    return {
+        "path": path,
+        "lines": lines if lines is not None else [""],
+        "cursor": cursor,
+        "scroll_y": scroll_y,
+        "scroll_x": scroll_x,
+        "dirty": dirty,
+    }
 
 
-_tabs: list[TabState] = []
-_current: int = 0
-
-
-def _persist_current(api) -> None:
-    """Write current buffer into _tabs[_current]."""
-    if _current >= len(_tabs):
+def save_current_tab(api):
+    """Snapshot the editor's current state into the active tab slot."""
+    if current_tab >= len(tabs):
         return
-    t = _tabs[_current]
-    t.path = api.get_path()
-    t.lines = api.get_lines()
-    t.cursor = api.get_cursor()
-    t.scroll_y = api.get_scroll_y()
-    t.scroll_x = api.get_scroll_x()
-    t.dirty = api.is_dirty()
+    tab = tabs[current_tab]
+    tab["path"] = api.get_path()
+    tab["lines"] = api.get_lines()
+    tab["cursor"] = api.get_cursor()
+    tab["scroll_y"] = api.get_scroll_y()
+    tab["scroll_x"] = api.get_scroll_x()
+    tab["dirty"] = api.is_dirty()
 
 
-def _activate_tab(api, index: int) -> None:
-    """Switch to tab at index, updating _current and restoring its buffer state."""
-    global _current
-    if index < 0 or index >= len(_tabs):
+def switch_to_tab(api, index):
+    """Restore a tab's saved state into the editor."""
+    global current_tab
+    if index < 0 or index >= len(tabs):
         return
-    _current = index
-    t = _tabs[index]
-    if t.path is not None and not t.dirty:
-        api.load_file(t.path)
+    current_tab = index
+    tab = tabs[index]
+    if tab["path"] is not None and not tab["dirty"]:
+        api.load_file(tab["path"])
     else:
-        api.replace_lines(t.lines, dirty=t.dirty)
-        api.set_path(t.path)
-    api.set_cursor(t.cursor[0], t.cursor[1])
-    api.set_scroll_y(t.scroll_y)
-    api.set_scroll_x(t.scroll_x)
+        api.replace_lines(tab["lines"], dirty=tab["dirty"])
+        api.set_path(tab["path"])
+    api.set_cursor(tab["cursor"][0], tab["cursor"][1])
+    api.set_scroll_y(tab["scroll_y"])
+    api.set_scroll_x(tab["scroll_x"])
 
-
-def _on_init(event: str, payload: dict) -> None:
+def _on_init(event, payload):
+    """Called once at startup. Turn the initial buffer into the first tab."""
+    global tabs, current_tab
     api = payload["api"]
-    global _tabs, _current
-    _tabs = [
-        TabState(
-            path=api.get_path(),
-            lines=api.get_lines(),
-            cursor=api.get_cursor(),
-            scroll_y=api.get_scroll_y(),
-            scroll_x=api.get_scroll_x(),
-            dirty=api.is_dirty(),
-        )
-    ]
-    _current = 0
+    tabs = [make_tab(
+        path = api.get_path(),
+        lines = api.get_lines(),
+        cursor = api.get_cursor(),
+        scroll_y = api.get_scroll_y(),
+        scroll_x = api.get_scroll_x(),
+        dirty = api.is_dirty(),
+    )]
+    current_tab = 0
 
 
-def _on_layout(event: str, payload: dict) -> None:
+def _on_layout(event, payload):
+    """Reserve one row at the top of the screen for the tab bar."""
     payload["api"].request_header_rows(1)
 
 
-def _on_render_overlay(event: str, payload: dict) -> None:
+def _on_render_overlay(event, payload):
+    """Draw the tab bar across the top of the screen."""
     api = payload["api"]
-    if 0 <= _current < len(_tabs):
-        _tabs[_current].dirty = api.is_dirty()
+
+    # Keep the active tab's dirty flag up to date
+    if 0 <= current_tab < len(tabs):
+        tabs[current_tab]["dirty"] = api.is_dirty()
+
     header = api.get_header_rect()
     if not header:
         return
+
     win = api.get_win()
-    hy, hx, hh, hw = header
+    hy, hx, hh, hw = header   # row, column, height, width of the header area
     x = hx
     remaining = hw
-    for i, t in enumerate(_tabs):
-        label = (t.path.name if t.path else "[Untitled]") + ("*" if t.dirty else "")
-        # Each tab takes at least 4 columns, capped by remaining space
-        if remaining > 1:
-            seg_len = min(max(4, len(label) + 3), remaining)
-        else:
-            seg_len = 0
-        if seg_len == 0:
+
+    for i, tab in enumerate(tabs):
+        # Build the label: filename (or "[Untitled]") with "*" when unsaved
+        name = tab["path"].name if tab["path"] else "[Untitled]"
+        label = name + ("*" if tab["dirty"] else "")
+
+        # Stop drawing if there is no space left
+        if remaining <= 1:
             break
+
+        # How many columns does this tab segment get
+        seg_len = min(max(4, len(label) + 3), remaining)
+
+        # Pad/trim the text to fit exactly in seg_len columns
         text = (" " + label)[:seg_len - 1].ljust(seg_len - 1)
-        attr = api.get_data("theme.ui_active", curses.A_REVERSE) if i == _current else api.get_data("theme.ui", 0)
+
+        # Highlight the active tab; leave others in the normal style
+        if i == current_tab:
+            attr = api.get_data("theme.ui_active", curses.A_REVERSE)
+        else:
+            attr = api.get_data("theme.ui", 0)
+
         try:
             win.addnstr(hy, x, text, seg_len - 1, attr)
         except Exception:
             pass
+
         x += seg_len
         remaining -= seg_len
 
 
-def _on_key(event: str, payload: dict) -> bool | None:
+def _on_key(event, payload):
+    """Handle Ctrl+K / Ctrl+L (switch tab) and Ctrl+N (new tab)."""
     key = payload.get("key")
     api = payload["api"]
+
     if key == KEY_PREV_TAB:
-        _persist_current(api)
-        _activate_tab(api, (_current - 1) % len(_tabs))
+        save_current_tab(api)
+        switch_to_tab(api, (current_tab - 1) % len(tabs))
         return True
+
     if key == KEY_NEXT_TAB:
-        _persist_current(api)
-        _activate_tab(api, (_current + 1) % len(_tabs))
+        save_current_tab(api)
+        switch_to_tab(api, (current_tab + 1) % len(tabs))
         return True
+
     if key == KEY_NEW_TAB:
-        _persist_current(api)
-        _tabs.append(TabState(path=None, lines=[""], cursor=(0, 0), scroll_y=0, scroll_x=0, dirty=False))
-        _activate_tab(api, len(_tabs) - 1)
+        save_current_tab(api)
+        tabs.append(make_tab())
+        switch_to_tab(api, len(tabs) - 1)
         return True
 
 
-def _on_saved(event: str, payload: dict) -> None:
-    if 0 <= _current < len(_tabs):
-        _tabs[_current].dirty = False
+def _on_saved(event, payload):
+    """Mark the active tab as clean after a successful save."""
+    if 0 <= current_tab < len(tabs):
+        tabs[current_tab]["dirty"] = False
 
 
 def setup(register_hook):
     register_hook(0, _on_init, event="init")
     register_hook(10, _on_layout, event="layout")
-    register_hook(5, _on_key, event="key")   # 5 runs before the editor's default key handling
+    register_hook(5, _on_key, event="key")
     register_hook(30, _on_render_overlay, event="render_overlay")
     register_hook(0, _on_saved, event="saved")

@@ -6,7 +6,7 @@ PROMPT_PREFIX = "Save as: "
 MAX_PATH_LEN = 512
 
 
-def _prompt_filename(api) -> str | None:
+def _prompt_filename(api):
     """Show a line prompt for filename. Returns the path string or None if cancelled."""
     win = api.get_win()
     height, width = api.get_size()
@@ -46,7 +46,7 @@ def _prompt_filename(api) -> str | None:
             name += chr(key)
 
 
-def _on_before_save(event: str, payload: dict) -> bool:
+def _on_before_save(event, payload):
     api = payload["api"]
     if api.get_path() is not None:
         return False  # Core will save as usual

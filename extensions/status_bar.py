@@ -3,11 +3,11 @@
 import curses
 
 
-def _on_layout(event: str, payload: dict) -> None:
+def _on_layout(event, payload):
     payload["api"].request_footer_rows(1)
 
 
-def _on_render_overlay(event: str, payload: dict) -> None:
+def _on_render_overlay(event, payload):
     api = payload["api"]
     win = api.get_win()
 

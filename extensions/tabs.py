@@ -47,7 +47,7 @@ def switch_to_tab(api, index):
         return
     current_tab = index
     tab = tabs[index]
-    if tab["path"] is not None and not tab["dirty"]:
+    if tab["path"] is not None and not tab["dirty"] and tab["path"].exists():
         api.load_file(tab["path"])
     else:
         api.replace_lines(tab["lines"], dirty=tab["dirty"])

@@ -7,9 +7,9 @@ Ctrl+N = new tab
 
 import curses
 
-KEY_PREV_TAB = 11   # Ctrl+K
-KEY_NEXT_TAB = 12   # Ctrl+L
-KEY_NEW_TAB = 14   # Ctrl+N
+KEY_PREV_TAB = 11  # Ctrl+K
+KEY_NEXT_TAB = 12  # Ctrl+L
+KEY_NEW_TAB = 14  # Ctrl+N
 
 tabs = []
 current_tab = 0
@@ -89,7 +89,7 @@ def _on_render_overlay(event, payload):
         return
 
     win = api.get_win()
-    hy, hx, hh, hw = header   # row, column, height, width of the header area
+    hy, hx, hh, hw = header  # row, column, height, width of the header area
     x = hx
     remaining = hw
 

@@ -13,8 +13,8 @@ import curses
 
 def _on_init(event, payload):
     api = payload["api"]
-    api.set_data("theme.text",      api.color_pair(-1, -1))
-    api.set_data("theme.ui",        api.color_pair(curses.COLOR_WHITE, curses.COLOR_BLACK))
+    api.set_data("theme.text", api.color_pair(-1, -1))
+    api.set_data("theme.ui", api.color_pair(curses.COLOR_WHITE, curses.COLOR_BLACK))
     api.set_data("theme.ui_active", api.color_pair(curses.COLOR_BLACK, curses.COLOR_WHITE))
 
 

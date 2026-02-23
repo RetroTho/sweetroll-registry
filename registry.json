@@ -15,6 +15,10 @@
     "save_untitled": {
       "description": "Prompts for a filename when saving an untitled buffer.",
       "url": "https://raw.githubusercontent.com/RetroTho/sweetroll-registry/main/extensions/save_untitled.py"
+    },
+    "line_numbers": {
+      "description": "Shows a column of line numbers to the left of the text.",
+      "url": "https://raw.githubusercontent.com/RetroTho/sweetroll-registry/main/extensions/line_numbers.py"
     }
   }
 }

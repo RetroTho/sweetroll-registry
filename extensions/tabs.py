@@ -69,6 +69,7 @@ def _on_init(event, payload):
         dirty = api.is_dirty(),
     )]
     current_tab = 0
+    api.set_data("tabs.list", tabs)
 
 
 def _on_layout(event, payload):
@@ -151,9 +152,15 @@ def _on_saved(event, payload):
         tabs[current_tab]["dirty"] = False
 
 
+def _on_before_quit(event, payload):
+    """Snapshot current tab so its dirty state is up to date."""
+    save_current_tab(payload["api"])
+
+
 def setup(register_hook):
     register_hook(0, _on_init, event="init")
     register_hook(10, _on_layout, event="layout")
     register_hook(5, _on_key, event="key")
     register_hook(30, _on_render_overlay, event="render_overlay")
     register_hook(0, _on_saved, event="saved")
+    register_hook(0, _on_before_quit, event="before_quit")

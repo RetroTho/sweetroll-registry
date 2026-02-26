@@ -27,6 +27,10 @@
     "file_selector": {
       "description": "Open a file from a list. Ctrl+O to open picker; Up/Down, Enter to open, Esc to cancel.",
       "url": "https://raw.githubusercontent.com/RetroTho/sweetroll-registry/main/extensions/file_selector.py"
+    },
+    "selection": {
+      "description": "Shift+Arrow to select; selection highlighted with A_REVERSE. Non-shift keys clear selection.",
+      "url": "https://raw.githubusercontent.com/RetroTho/sweetroll-registry/main/extensions/selection.py"
     }
   }
 }

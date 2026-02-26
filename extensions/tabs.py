@@ -81,8 +81,9 @@ def _on_render_overlay(event, payload):
     """Draw the tab bar across the top of the screen."""
     api = payload["api"]
 
-    # Keep the active tab's dirty flag up to date
+    # Keep the active tab in sync with the buffer
     if 0 <= current_tab < len(tabs):
+        tabs[current_tab]["path"] = api.get_path()
         tabs[current_tab]["dirty"] = api.is_dirty()
 
     header = api.get_header_rect()

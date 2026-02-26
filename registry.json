@@ -23,6 +23,10 @@
     "line_numbers": {
       "description": "Shows a column of line numbers to the left of the text.",
       "url": "https://raw.githubusercontent.com/RetroTho/sweetroll-registry/main/extensions/line_numbers.py"
+    },
+    "file_selector": {
+      "description": "Open a file from a list. Ctrl+O to open picker; Up/Down, Enter to open, Esc to cancel.",
+      "url": "https://raw.githubusercontent.com/RetroTho/sweetroll-registry/main/extensions/file_selector.py"
     }
   }
 }

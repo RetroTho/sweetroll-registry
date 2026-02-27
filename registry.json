@@ -33,12 +33,14 @@
       "url": "https://raw.githubusercontent.com/RetroTho/sweetroll-registry/main/extensions/selection.py"
     },
     "clipboard": {
-      "description": "Copy/paste with Ctrl+C/Ctrl+V using the system clipboard (xclip); requires the 'selection' extension.",
-      "url": "https://raw.githubusercontent.com/RetroTho/sweetroll-registry/main/extensions/clipboard.py"
+      "description": "Copy/paste with Ctrl+C/Ctrl+V using the system clipboard (xclip).",
+      "url": "https://raw.githubusercontent.com/RetroTho/sweetroll-registry/main/extensions/clipboard.py",
+      "depends": ["selection"]
     },
     "selection_delete": {
-      "description": "Backspace deletes all selected text; requires the 'selection' extension.",
-      "url": "https://raw.githubusercontent.com/RetroTho/sweetroll-registry/main/extensions/selection_delete.py"
+      "description": "Backspace deletes all selected text.",
+      "url": "https://raw.githubusercontent.com/RetroTho/sweetroll-registry/main/extensions/selection_delete.py",
+      "depends": ["selection"]
     }
   }
 }

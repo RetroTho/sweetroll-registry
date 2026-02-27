@@ -41,6 +41,10 @@
       "description": "Backspace deletes all selected text.",
       "url": "https://raw.githubusercontent.com/RetroTho/sweetroll-registry/main/extensions/selection_delete.py",
       "depends": ["selection"]
+    },
+    "extended_keys": {
+      "description": "Enables modifier+key combinations. Other extensions listen for string names in their key hooks.",
+      "url": "https://raw.githubusercontent.com/RetroTho/sweetroll-registry/main/extensions/extended_keys.py"
     }
   }
 }

@@ -31,6 +31,10 @@
     "selection": {
       "description": "Shift+Arrow to select; selection highlighted with A_REVERSE. Non-shift keys clear selection.",
       "url": "https://raw.githubusercontent.com/RetroTho/sweetroll-registry/main/extensions/selection.py"
+    },
+    "clipboard": {
+      "description": "Copy/paste with Ctrl+C/Ctrl+V using the system clipboard (xclip); requires the 'selection' extension.",
+      "url": "https://raw.githubusercontent.com/RetroTho/sweetroll-registry/main/extensions/clipboard.py"
     }
   }
 }

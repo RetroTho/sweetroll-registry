@@ -45,6 +45,15 @@
     "extended_keys": {
       "description": "Enables modifier+key combinations. Other extensions listen for string names in their key hooks.",
       "url": "https://raw.githubusercontent.com/RetroTho/sweetroll-registry/main/extensions/extended_keys.py"
+    },
+    "history": {
+      "description": "Records buffer state over time in the shared data store for undo/redo.",
+      "url": "https://raw.githubusercontent.com/RetroTho/sweetroll-registry/main/extensions/history.py"
+    },
+    "undo_redo": {
+      "description": "Ctrl+Z to undo, Ctrl+Shift+Z to redo. Uses the history extension for buffer states.",
+      "url": "https://raw.githubusercontent.com/RetroTho/sweetroll-registry/main/extensions/undo_redo.py",
+      "depends": ["extended_keys", "history"]
     }
   }
 }

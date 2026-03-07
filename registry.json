@@ -54,6 +54,11 @@
       "description": "Ctrl+Z to undo, Ctrl+Shift+Z to redo. Uses the history extension for buffer states.",
       "url": "https://raw.githubusercontent.com/RetroTho/sweetroll-registry/main/extensions/undo_redo.py",
       "depends": ["extended_keys", "history"]
+    },
+    "syntax_highlight": {
+      "description": "Syntax highlighting for code files. Colors keywords, strings, comments, and more.",
+      "url": "https://raw.githubusercontent.com/RetroTho/sweetroll-registry/main/extensions/syntax_highlight.py",
+      "depends": ["theme"]
     }
   }
 }

@@ -16,6 +16,12 @@ def _on_init(event, payload):
     api.set_data("theme.text", api.color_pair(-1, -1))
     api.set_data("theme.ui", api.color_pair(curses.COLOR_WHITE, 8))
     api.set_data("theme.ui_active", api.color_pair(curses.COLOR_BLACK, curses.COLOR_WHITE))
+    api.set_data("theme.syntax_keyword", api.color_pair(curses.COLOR_YELLOW, -1))
+    api.set_data("theme.syntax_string", api.color_pair(curses.COLOR_GREEN, -1))
+    api.set_data("theme.syntax_comment", api.color_pair(curses.COLOR_CYAN, -1))
+    api.set_data("theme.syntax_number", api.color_pair(curses.COLOR_MAGENTA, -1))
+    api.set_data("theme.syntax_builtin", api.color_pair(curses.COLOR_BLUE, -1))
+    api.set_data("theme.syntax_decorator", api.color_pair(curses.COLOR_RED, -1))
 
 
 def _on_before_render(event, payload):
